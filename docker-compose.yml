@@ -1,0 +1,52 @@
+# ==================================================
+#                   SERVICES
+# ==================================================
+
+services:  # Define os serviços (containers) que serao executados
+
+  # -------------------- POSTGRES --------------------
+
+  postgres:                                     # Nome do serviço (container do banco de dados)
+    image: postgres:17.5                        # Imagem oficial do PostgreSQL na versão 17.5
+    environment:                                # Variáveis de ambiente usadas na inicialização do container
+      POSTGRES_USER: postgres                   # Usuário padrão do banco
+      POSTGRES_PASSWORD: postgres               # Senha do usuário postgres
+    volumes:                                    # Persistência de dados
+      - postgres-data:/var/lib/postgresql/data  # Volume nomeado para salvar os dados do banco
+    ports:                                      # Mapeamento de portas (host:container)
+      - 5432:5432                               # Porta padrão do PostgreSQL
+    networks:                                   # Rede que o container vai usar
+      - local-network                           # Nome da rede definida abaixo
+
+  # -------------------- PGADMIN --------------------
+
+  pgadmin:                                         # Serviço do pgAdmin (interface web para gerenciar PostgreSQL)
+    image: dpage/pgadmin4:9.5                      # Imagem oficial do pgAdmin versão 9.5
+    depends_on:                                    # Define dependência de inicialização
+      - postgres                                   # Garante que o postgres inicie antes (mas não garante que esteja pronto)
+    environment:                                   # Variáveis de configuração do pgAdmin
+      PGADMIN_DEFAULT_EMAIL: dba@vegandelivery.com # Email de login no pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: vegandelivery      # Senha de login
+    ports:                                         # Porta de acesso via navegador
+      - 8083:80                                    # Acesse em http://localhost:8083
+    volumes:                                       # Persistência de dados do pgAdmin
+      - pgadmin-data:/var/lib/pgadmin              # Salva configurações e conexões
+    networks:                                      # Rede compartilhada com o postgres
+      - local-network                              # Permite comunicação entre pgAdmin e PostgreSQL
+
+
+# ==================================================
+#                   VOLUMES
+# ==================================================
+
+volumes:                                          # Declaração de volumes nomeados
+  postgres-data:                                  # Volume para armazenar dados do PostgreSQL
+  pgadmin-data:                                   # Volume para armazenar dados do pgAdmin
+
+# ==================================================
+#                   NETWORKS
+# ==================================================
+
+networks:                                         # Declaração de redes
+  local-network:                                  # Nome da rede usada pelos containers
+    driver: bridge                                # Tipo de rede padrão do Docker (containers se comunicam internamente)
