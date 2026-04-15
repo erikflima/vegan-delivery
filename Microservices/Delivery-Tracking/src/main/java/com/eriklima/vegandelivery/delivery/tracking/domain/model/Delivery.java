@@ -1,6 +1,8 @@
 package com.eriklima.vegandelivery.delivery.tracking.domain.model;
+import com.eriklima.vegandelivery.delivery.tracking.domain.exception.DomainException;
 import lombok.*;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,12 +49,12 @@ public class Delivery {
 
         Delivery delivery = new Delivery();
 
-        delivery.setId( UUID.randomUUID() );
-        delivery.setStatus( DeliveryStatus.DRAFT );
+        delivery.setId(UUID.randomUUID());
+        delivery.setStatus( DeliveryStatus.DRAFT);
         delivery.setTotalItems(0);
-        delivery.setTotalCost( BigDecimal.ZERO );
-        delivery.setCourierPayout( BigDecimal.ZERO );
-        delivery.setDistanceFee ( BigDecimal.ZERO );
+        delivery.setTotalCost(BigDecimal.ZERO);
+        delivery.setCourierPayout(BigDecimal.ZERO);
+        delivery.setDistanceFee(BigDecimal.ZERO);
 
         return delivery;
     }
@@ -62,7 +64,6 @@ public class Delivery {
 
         Item item = Item.brandNew(name, quantity);
         items.add(item);
-
         calculateTotalItems();
 
         return item.getId();
@@ -71,15 +72,16 @@ public class Delivery {
 
     public void removeItem(UUID itemId) {
 
-        items.removeIf(item -> item.getId().equals(itemId));
-
+        items.removeIf(item -> item.getId().equals(itemId) );
         calculateTotalItems();
     }
 
 
     public void changeItemQuantity(UUID itemId, int quantity) {
 
-        Item item = getItems().stream().filter(i -> i.getId().equals(itemId) ).findFirst().orElseThrow();
+        Item item = getItems().stream().filter(i -> i.getId().equals(itemId))
+                .findFirst().orElseThrow();
+
         item.setQuantity(quantity);
 
         calculateTotalItems();
@@ -93,6 +95,44 @@ public class Delivery {
     }
 
 
+    public void editPreparationDetails(PreparationDetails details) {
+
+        verifyIfCanBeEdited();
+
+        setSender(details.getSender());
+        setRecipient(details.getRecipient());
+        setDistanceFee(details.getDistanceFee());
+        setCourierPayout(details.getCourierPayout());
+
+        setExpectedDeliveryAt( OffsetDateTime.now().plus( details.getExpectedDeliveryTime() ) );
+
+        setTotalCost( this.getDistanceFee().add( this.getCourierPayout() ) );
+    }
+
+
+    public void place() {
+
+        verifyIfCanBePlaced();
+
+        this.setStatus(DeliveryStatus.WAITING_FOR_COURIER);
+        this.setPlacedAt(OffsetDateTime.now());
+    }
+
+
+    public void pickUp(UUID courierId) {
+
+        this.setCourierId(courierId);
+        this.setStatus(DeliveryStatus.IN_TRANSIT);
+        this.setAssignedAt(OffsetDateTime.now());
+    }
+
+
+    public void markAsDelivered() {
+
+        this.setStatus(DeliveryStatus.DELIVERY);
+        this.setFulfilledAt(OffsetDateTime.now());
+    }
+
     public List<Item> getItems() {
 
         return Collections.unmodifiableList(this.items);
@@ -102,8 +142,52 @@ public class Delivery {
     private void calculateTotalItems() {
 
         int totalItems = getItems().stream().mapToInt(Item::getQuantity).sum();
-
         setTotalItems(totalItems);
+    }
+
+
+    private void verifyIfCanBePlaced() {
+
+        if (!isFilled()) {
+
+            throw new DomainException();
+        }
+
+        if ( !getStatus().equals( DeliveryStatus.DRAFT ) ) {
+
+            throw new DomainException();
+        }
+    }
+
+
+    private void verifyIfCanBeEdited() {
+
+        if ( !getStatus().equals( DeliveryStatus.DRAFT ) ) {
+
+            throw new DomainException();
+        }
+    }
+
+
+    private boolean isFilled() {
+
+        return this.getSender() != null  &&
+                this.getRecipient() != null &&
+                this.getTotalCost() != null;
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class PreparationDetails {
+
+        private ContactPoint sender;
+        private ContactPoint recipient;
+        private BigDecimal distanceFee;
+        private BigDecimal courierPayout;
+        private Duration expectedDeliveryTime;
+
     }
 
 }
