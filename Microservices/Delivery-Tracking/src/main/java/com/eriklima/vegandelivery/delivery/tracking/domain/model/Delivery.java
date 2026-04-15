@@ -49,12 +49,12 @@ public class Delivery {
 
         Delivery delivery = new Delivery();
 
-        delivery.setId(UUID.randomUUID());
+        delivery.setId( UUID.randomUUID() );
         delivery.setStatus( DeliveryStatus.DRAFT);
-        delivery.setTotalItems(0);
-        delivery.setTotalCost(BigDecimal.ZERO);
-        delivery.setCourierPayout(BigDecimal.ZERO);
-        delivery.setDistanceFee(BigDecimal.ZERO);
+        delivery.setTotalItems( 0 );
+        delivery.setTotalCost( BigDecimal.ZERO );
+        delivery.setCourierPayout( BigDecimal.ZERO );
+        delivery.setDistanceFee( BigDecimal.ZERO );
 
         return delivery;
     }
@@ -99,10 +99,13 @@ public class Delivery {
 
         verifyIfCanBeEdited();
 
-        setSender(details.getSender());
-        setRecipient(details.getRecipient());
-        setDistanceFee(details.getDistanceFee());
-        setCourierPayout(details.getCourierPayout());
+        setSender( details.getSender() );
+
+        setRecipient( details.getRecipient() );
+
+        setDistanceFee( details.getDistanceFee() );
+
+        setCourierPayout( details.getCourierPayout() );
 
         setExpectedDeliveryAt( OffsetDateTime.now().plus( details.getExpectedDeliveryTime() ) );
 
@@ -114,8 +117,8 @@ public class Delivery {
 
         verifyIfCanBePlaced();
 
-        this.setStatus(DeliveryStatus.WAITING_FOR_COURIER);
-        this.setPlacedAt(OffsetDateTime.now());
+        this.setStatus( DeliveryStatus.WAITING_FOR_COURIER );
+        this.setPlacedAt( OffsetDateTime.now() );
     }
 
 
@@ -148,7 +151,7 @@ public class Delivery {
 
     private void verifyIfCanBePlaced() {
 
-        if (!isFilled()) {
+        if ( !isFilled() ) {
 
             throw new DomainException();
         }
@@ -172,8 +175,8 @@ public class Delivery {
     private boolean isFilled() {
 
         return this.getSender() != null  &&
-                this.getRecipient() != null &&
-                this.getTotalCost() != null;
+               this.getRecipient() != null &&
+               this.getTotalCost() != null;
     }
 
 
