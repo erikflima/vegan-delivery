@@ -48,17 +48,15 @@ public class Delivery {
     public static Delivery draft() {
 
         Delivery delivery = new Delivery();
-
-        delivery.setId( UUID.randomUUID() );
+        delivery.setId(UUID.randomUUID());
         delivery.setStatus( DeliveryStatus.DRAFT);
-        delivery.setTotalItems( 0 );
-        delivery.setTotalCost( BigDecimal.ZERO );
-        delivery.setCourierPayout( BigDecimal.ZERO );
-        delivery.setDistanceFee( BigDecimal.ZERO );
+        delivery.setTotalItems(0);
+        delivery.setTotalCost(BigDecimal.ZERO);
+        delivery.setCourierPayout(BigDecimal.ZERO);
+        delivery.setDistanceFee(BigDecimal.ZERO);
 
         return delivery;
     }
-
 
     public UUID addItem(String name, int quantity) {
 
@@ -69,13 +67,12 @@ public class Delivery {
         return item.getId();
     }
 
-
     public void removeItem(UUID itemId) {
 
-        items.removeIf(item -> item.getId().equals(itemId) );
+        items.removeIf(item -> item.getId().equals(itemId));
+
         calculateTotalItems();
     }
-
 
     public void changeItemQuantity(UUID itemId, int quantity) {
 
@@ -83,10 +80,8 @@ public class Delivery {
                 .findFirst().orElseThrow();
 
         item.setQuantity(quantity);
-
         calculateTotalItems();
     }
-
 
     public void removeItems() {
 
@@ -94,53 +89,42 @@ public class Delivery {
         calculateTotalItems();
     }
 
-
     public void editPreparationDetails(PreparationDetails details) {
 
         verifyIfCanBeEdited();
 
-        setSender( details.getSender() );
+        setSender(details.getSender());
+        setRecipient(details.getRecipient());
+        setDistanceFee(details.getDistanceFee());
+        setCourierPayout(details.getCourierPayout());
 
-        setRecipient( details.getRecipient() );
-
-        setDistanceFee( details.getDistanceFee() );
-
-        setCourierPayout( details.getCourierPayout() );
-
-        setExpectedDeliveryAt( OffsetDateTime.now().plus( details.getExpectedDeliveryTime() ) );
-
-        setTotalCost( this.getDistanceFee().add( this.getCourierPayout() ) );
+        setExpectedDeliveryAt(OffsetDateTime.now().plus(details.getExpectedDeliveryTime()));
+        setTotalCost(this.getDistanceFee().add(this.getCourierPayout()));
     }
-
 
     public void place() {
 
         verifyIfCanBePlaced();
-
-        this.setStatus( DeliveryStatus.WAITING_FOR_COURIER );
-        this.setPlacedAt( OffsetDateTime.now() );
+        this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
+        this.setPlacedAt(OffsetDateTime.now());
     }
-
 
     public void pickUp(UUID courierId) {
 
         this.setCourierId(courierId);
-        this.setStatus(DeliveryStatus.IN_TRANSIT);
+        this.changeStatusTo(DeliveryStatus.IN_TRANSIT);
         this.setAssignedAt(OffsetDateTime.now());
     }
 
-
     public void markAsDelivered() {
 
-        this.setStatus(DeliveryStatus.DELIVERY);
+        this.changeStatusTo(DeliveryStatus.DELIVERY);
         this.setFulfilledAt(OffsetDateTime.now());
     }
 
     public List<Item> getItems() {
-
         return Collections.unmodifiableList(this.items);
     }
-
 
     private void calculateTotalItems() {
 
@@ -148,35 +132,41 @@ public class Delivery {
         setTotalItems(totalItems);
     }
 
-
     private void verifyIfCanBePlaced() {
 
-        if ( !isFilled() ) {
+        if (!isFilled()) {
 
             throw new DomainException();
         }
 
-        if ( !getStatus().equals( DeliveryStatus.DRAFT ) ) {
+        if (!getStatus().equals(DeliveryStatus.DRAFT)) {
 
             throw new DomainException();
         }
     }
-
 
     private void verifyIfCanBeEdited() {
 
-        if ( !getStatus().equals( DeliveryStatus.DRAFT ) ) {
-
+        if (!getStatus().equals(DeliveryStatus.DRAFT)) {
             throw new DomainException();
         }
     }
 
-
     private boolean isFilled() {
 
-        return this.getSender() != null  &&
-               this.getRecipient() != null &&
-               this.getTotalCost() != null;
+        return this.getSender() != null
+                && this.getRecipient() != null
+                && this.getTotalCost() != null;
+    }
+
+    private void changeStatusTo(DeliveryStatus newStatus) {
+
+        if ( newStatus != null && this.getStatus().canNotChangeTo(newStatus) ) {
+
+            throw new DomainException( "Invalid status transition from " + this.getStatus() + " to " + newStatus );
+        }
+
+        this.setStatus(newStatus);
     }
 
 
@@ -190,7 +180,6 @@ public class Delivery {
         private BigDecimal distanceFee;
         private BigDecimal courierPayout;
         private Duration expectedDeliveryTime;
-
     }
 
 }
