@@ -11,4 +11,5 @@ public class CourierManagementApplication {
 		SpringApplication.run(CourierManagementApplication.class, args);
 	}
 
+	
 }
