@@ -1,11 +1,18 @@
 spring:
   application:
-    name: courier-management
+    name: courier-management  # Nome do microserviço
+
+  # Ativa cores no console (logs coloridos)
+  output:
+    ansi:
+      enabled: ALWAYS
+
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: false
+      ddl-auto: update  # Atualiza automaticamente o schema do banco (cuidado em produção)
+    show-sql: false     # Exibe queries SQL no console (true para debug)
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/courierdb
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:5432/courierdb  # URL do banco PostgreSQL
+    username: postgres  # Usuário do banco
+    password: postgres  # Senha do banco (não usar assim em produção)

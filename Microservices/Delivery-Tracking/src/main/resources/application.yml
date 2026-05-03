@@ -1,11 +1,18 @@
 spring:
   application:
-    name: delivery-tracking
+    name: delivery-tracking  # Nome da aplicação
+
+  # Ativa cores no console (ANSI)
+  output:
+    ansi:
+      enabled: ALWAYS
+
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: false
+      ddl-auto: update  # Atualiza o schema automaticamente
+    show-sql: false     # Mostra queries SQL no console
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/deliverydb
+    url: jdbc:postgresql://localhost:5432/deliverydb  # URL do banco
     username: postgres
     password: postgres
