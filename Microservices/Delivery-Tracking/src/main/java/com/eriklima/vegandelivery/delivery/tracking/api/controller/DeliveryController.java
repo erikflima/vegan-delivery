@@ -1,5 +1,6 @@
 package com.eriklima.vegandelivery.delivery.tracking.api.controller;
 import com.eriklima.vegandelivery.delivery.tracking.api.model.DeliveryInput;
+import com.eriklima.vegandelivery.delivery.tracking.domain.model.CourierIdInput;
 import com.eriklima.vegandelivery.delivery.tracking.domain.model.Delivery;
 import com.eriklima.vegandelivery.delivery.tracking.domain.repository.DeliveryRepository;
 import com.eriklima.vegandelivery.delivery.tracking.domain.service.DeliveryPreparationService;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeliveryController {
 
+
     private final DeliveryPreparationService deliveryPreparationService;
     private final DeliveryRepository deliveryRepository;
 
@@ -26,30 +28,48 @@ public class DeliveryController {
     @ResponseStatus(HttpStatus.CREATED)
     public Delivery draft( @RequestBody @Valid DeliveryInput input ) {
 
-        return deliveryPreparationService.draft( input );
+        return deliveryPreparationService.draft(input);
     }
 
 
     @PutMapping("/{deliveryId}")
     public Delivery edit( @PathVariable UUID deliveryId,
-                          @RequestBody @Valid DeliveryInput input) {
+                          @RequestBody @Valid DeliveryInput input ) {
 
-        return deliveryPreparationService.edit( deliveryId, input );
+        return deliveryPreparationService.edit(deliveryId, input);
     }
 
 
     @GetMapping
     public PagedModel<Delivery> findAll( @PageableDefault Pageable pageable ) {
 
-        return new PagedModel<>( deliveryRepository.findAll( pageable ) );
-
+        return new PagedModel<>( deliveryRepository.findAll(pageable) );
     }
 
 
     @GetMapping("/{deliveryId}")
-    public Delivery findById( @PathVariable UUID deliveryId ) {
+    public Delivery findById(@PathVariable UUID deliveryId) {
 
-        return deliveryRepository.findById( deliveryId ).orElseThrow( ()-> new ResponseStatusException( HttpStatus.NOT_FOUND) );
+        return deliveryRepository.findById(deliveryId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+
+    @PostMapping("/{deliveryId}/placement")
+    public void place( @PathVariable UUID deliveryId ) {
+
+    }
+
+
+    @PostMapping("/{deliveryId}/pickups")
+    public void pickup( @PathVariable UUID deliveryId,
+                        @Valid @RequestBody CourierIdInput input) {
+
+    }
+
+
+    @PostMapping("/{deliveryId}/completion")
+    public void complete( @PathVariable UUID deliveryId ) {
+
     }
 
 }
