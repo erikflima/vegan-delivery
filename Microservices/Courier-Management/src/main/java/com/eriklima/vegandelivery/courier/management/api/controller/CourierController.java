@@ -1,7 +1,10 @@
 package com.eriklima.vegandelivery.courier.management.api.controller;
 import com.eriklima.vegandelivery.courier.management.api.model.CourierInput;
+import com.eriklima.vegandelivery.courier.management.api.model.CourierPayoutCalculationInput;
+import com.eriklima.vegandelivery.courier.management.api.model.CourierPayoutResultModel;
 import com.eriklima.vegandelivery.courier.management.domain.model.Courier;
 import com.eriklima.vegandelivery.courier.management.domain.repository.CourierRepository;
+import com.eriklima.vegandelivery.courier.management.domain.service.CourierPayoutService;
 import com.eriklima.vegandelivery.courier.management.domain.service.CourierRegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,8 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,7 +28,10 @@ public class CourierController {
 
 
     private final CourierRegistrationService courierRegistrationService;
+
     private final CourierRepository courierRepository;
+
+    private final CourierPayoutService courierPayoutService;
 
 
     @PostMapping
@@ -67,5 +75,13 @@ public class CourierController {
         return courier;
     }
 
+
+    @PostMapping("/payout-calculation")
+    public CourierPayoutResultModel calculate( @RequestBody CourierPayoutCalculationInput input ) {
+
+        BigDecimal payoutFee = courierPayoutService.calculate( input.getDistanceInKm() );
+
+        return new CourierPayoutResultModel( payoutFee );
+    }
 
 }
