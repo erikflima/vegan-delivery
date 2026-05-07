@@ -47,7 +47,7 @@ public class DeliveryPreparationService {
     }
 
 
-    private void handlePreparation(DeliveryInput input, Delivery delivery) {
+    private void handlePreparation( DeliveryInput input, Delivery delivery ) {
 
         ContactPointInput senderInput = input.getSender();
         ContactPointInput recipientInput = input.getRecipient();

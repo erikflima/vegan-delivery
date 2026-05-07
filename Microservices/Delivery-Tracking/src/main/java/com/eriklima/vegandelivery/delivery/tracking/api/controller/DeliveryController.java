@@ -20,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeliveryController {
 
+
     private final DeliveryPreparationService deliveryPreparationService;
 
     private final DeliveryCheckpointService deliveryCheckpointService;
@@ -44,23 +45,23 @@ public class DeliveryController {
 
 
     @GetMapping
-    public PagedModel<Delivery> findAll(@PageableDefault Pageable pageable) {
+    public PagedModel<Delivery> findAll( @PageableDefault Pageable pageable ) {
 
         return new PagedModel<>( deliveryRepository.findAll(pageable) );
     }
 
 
     @GetMapping("/{deliveryId}")
-    public Delivery findById(@PathVariable UUID deliveryId) {
+    public Delivery findById( @PathVariable UUID deliveryId ) {
 
         return deliveryRepository.findById( deliveryId ).orElseThrow( ()-> new ResponseStatusException( HttpStatus.NOT_FOUND ) );
     }
 
 
     @PostMapping("/{deliveryId}/placement")
-    public void place(@PathVariable UUID deliveryId) {
+    public void place( @PathVariable UUID deliveryId ) {
 
-        deliveryCheckpointService.place(deliveryId);
+        deliveryCheckpointService.place( deliveryId );
     }
 
 
@@ -73,9 +74,9 @@ public class DeliveryController {
 
 
     @PostMapping("/{deliveryId}/completion")
-    public void complete(@PathVariable UUID deliveryId) {
+    public void complete( @PathVariable UUID deliveryId ) {
 
-        deliveryCheckpointService.complete(deliveryId);
+        deliveryCheckpointService.complete( deliveryId );
     }
 
 }
