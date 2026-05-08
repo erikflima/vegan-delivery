@@ -1,0 +1,20 @@
+server.port: 8081
+
+spring:
+  application:
+    name: courier-management  # Nome do microserviço
+
+  # Ativa cores no console (logs coloridos)
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  #
+    show-sql: true     # Exibe queries SQL no console (true para debug)
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/courierdb_test  # URL do banco PostgreSQL para teste.
+    username: postgres  # Usuário do banco
+    password: postgres  # Senha do banco (não usar assim em produção)

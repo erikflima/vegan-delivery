@@ -53,22 +53,22 @@ public class DeliveryPreparationService {
         ContactPointInput recipientInput = input.getRecipient();
 
         ContactPoint sender = ContactPoint.builder()
-                                            .phone(senderInput.getPhone())
-                                            .name(senderInput.getName())
-                                            .complement(senderInput.getComplement())
-                                            .number(senderInput.getNumber())
-                                            .zipCode(senderInput.getZipCode())
-                                            .street(senderInput.getStreet())
+                                            .phone( senderInput.getPhone() )
+                                            .name( senderInput.getName() )
+                                            .complement( senderInput.getComplement() )
+                                            .number( senderInput.getNumber() )
+                                            .zipCode( senderInput.getZipCode() )
+                                            .street(senderInput.getStreet() )
                                             .build();
 
 
         ContactPoint recipient = ContactPoint.builder()
-                                            .phone(recipientInput.getPhone())
-                                            .name(recipientInput.getName())
-                                            .complement(recipientInput.getComplement())
-                                            .number(recipientInput.getNumber())
-                                            .zipCode(recipientInput.getZipCode())
-                                            .street(recipientInput.getStreet())
+                                            .phone( recipientInput.getPhone() )
+                                            .name( recipientInput.getName() )
+                                            .complement( recipientInput.getComplement() )
+                                            .number( recipientInput.getNumber() )
+                                            .zipCode( recipientInput.getZipCode() )
+                                            .street( recipientInput.getStreet() )
                                             .build();
 
 
