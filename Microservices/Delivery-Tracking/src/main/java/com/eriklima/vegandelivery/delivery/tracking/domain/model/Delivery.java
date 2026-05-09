@@ -1,7 +1,12 @@
 package com.eriklima.vegandelivery.delivery.tracking.domain.model;
+import com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryFulfilledEvent;
+import com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryPickUpEvent;
+import com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryPlacedEvent;
 import com.eriklima.vegandelivery.delivery.tracking.domain.exception.DomainException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.AbstractAggregateRoot;
+
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -12,10 +17,10 @@ import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class Delivery {
+public class Delivery extends AbstractAggregateRoot<Delivery> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -143,6 +148,10 @@ public class Delivery {
         this.changeStatusTo( DeliveryStatus.WAITING_FOR_COURIER );
 
         this.setPlacedAt( OffsetDateTime.now() );
+
+        //Registrando um evento do tipo "DeliveryPlacedEvent" que criei. Passo o tipo de evento, o momento que ocorreu e o id da entrega.
+        super.registerEvent( new DeliveryPlacedEvent( this.getPlacedAt(), this.getId() ) );
+
     }
 
 
@@ -189,6 +198,9 @@ public class Delivery {
         this.changeStatusTo( DeliveryStatus.IN_TRANSIT );
 
         this.setAssignedAt( OffsetDateTime.now( ));
+
+        //Registrando um evento do tipo "DeliveryPickUpEvent" que criei. Passo o tipo de evento, o momento que ocorreu e o id da entrega.
+        super.registerEvent( new DeliveryPickUpEvent( this.getAssignedAt(), this.getId() ) );
     }
 
 
@@ -197,6 +209,10 @@ public class Delivery {
         this.changeStatusTo( DeliveryStatus.DELIVERED );
 
         this.setFulfilledAt( OffsetDateTime.now() );
+
+        //Registrando um evento do tipo "DeliveryFulfilledEvent" que criei. Passo o tipo de evento, o momento que ocorreu e o id da entrega.
+        super.registerEvent( new DeliveryFulfilledEvent( this.getFulfilledAt(), this.getId() ) );
+
     }
 
 
