@@ -26,14 +26,15 @@ public class Item {
     private Delivery delivery;
 
 
-    static Item brandNew(String name, Integer quantity, Delivery delivery) {
+    //Cria um item novo.
+    static Item brandNew( String name, Integer quantity, Delivery delivery ) {
 
         Item item = new Item();
 
-        item.setId(UUID.randomUUID());
-        item.setName(name);
-        item.setQuantity(quantity);
-        item.setDelivery(delivery);
+        item.setId( UUID.randomUUID() );
+        item.setName( name );
+        item.setQuantity( quantity );
+        item.setDelivery( delivery );
 
         return item;
     }

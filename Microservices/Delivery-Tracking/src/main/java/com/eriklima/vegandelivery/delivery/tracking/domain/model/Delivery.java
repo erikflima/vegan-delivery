@@ -42,24 +42,22 @@ public class Delivery {
     private Integer totalItems;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "zipCode",    column = @Column(name = "sender_zip_code")),
-            @AttributeOverride(name = "street",     column = @Column(name = "sender_street")),
-            @AttributeOverride(name = "number",     column = @Column(name = "sender_number")),
-            @AttributeOverride(name = "complement", column = @Column(name = "sender_complement")),
-            @AttributeOverride(name = "name",       column = @Column(name = "sender_name")),
-            @AttributeOverride(name = "phone",      column = @Column(name = "sender_phone"))
+    @AttributeOverrides({ @AttributeOverride( name = "zipCode",    column = @Column( name = "sender_zip_code")),
+                          @AttributeOverride( name = "street",     column = @Column( name = "sender_street")),
+                          @AttributeOverride( name = "number",     column = @Column( name = "sender_number")),
+                          @AttributeOverride( name = "complement", column = @Column( name = "sender_complement")),
+                          @AttributeOverride( name = "name",       column = @Column( name = "sender_name")),
+                          @AttributeOverride( name = "phone",      column = @Column( name = "sender_phone"))
     })
     private ContactPoint sender;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "zipCode",    column = @Column(name = "recipient_zip_code")),
-            @AttributeOverride(name = "street",     column = @Column(name = "recipient_street")),
-            @AttributeOverride(name = "number",     column = @Column(name = "recipient_number")),
-            @AttributeOverride(name = "complement", column = @Column(name = "recipient_complement")),
-            @AttributeOverride(name = "name",       column = @Column(name = "recipient_name")),
-            @AttributeOverride(name = "phone",      column = @Column(name = "recipient_phone"))
+    @AttributeOverrides({ @AttributeOverride( name = "zipCode",    column = @Column( name = "recipient_zip_code")),
+                          @AttributeOverride( name = "street",     column = @Column( name = "recipient_street")),
+                          @AttributeOverride( name = "number",     column = @Column( name = "recipient_number")),
+                          @AttributeOverride( name = "complement", column = @Column( name = "recipient_complement")),
+                          @AttributeOverride( name = "name",       column = @Column( name = "recipient_name")),
+                          @AttributeOverride( name = "phone",      column = @Column( name = "recipient_phone"))
     })
     private ContactPoint recipient;
 
@@ -69,6 +67,7 @@ public class Delivery {
 
     //-----------------------------------------------------------//
 
+    //Cria uma entrega (deliveru) com o status de draft.
     public static Delivery draft() {
 
         Delivery delivery = new Delivery();
@@ -83,27 +82,34 @@ public class Delivery {
         return delivery;
     }
 
-    public UUID addItem(String name, int quantity) {
 
-        Item item = Item.brandNew(name, quantity, this);
-        items.add(item);
+    //Adiciona um item na entrega(delivery).
+    public UUID addItem( String name, int quantity ) {
+
+        Item item = Item.brandNew( name, quantity, this );
+
+        items.add( item );
+
         calculateTotalItems();
 
         return item.getId();
     }
 
-    public void removeItem(UUID itemId) {
 
-        items.removeIf(item -> item.getId().equals(itemId));
+    public void removeItem( UUID itemId ) {
+
+        items.removeIf( item -> item.getId().equals( itemId) );
+
         calculateTotalItems();
     }
 
+
     public void changeItemQuantity(UUID itemId, int quantity) {
 
-        Item item = getItems().stream().filter(i -> i.getId().equals(itemId))
+        Item item = getItems().stream().filter( i -> i.getId().equals(itemId) )
                 .findFirst().orElseThrow();
 
-        item.setQuantity(quantity);
+        item.setQuantity( quantity );
 
         calculateTotalItems();
     }
@@ -116,7 +122,7 @@ public class Delivery {
     }
 
 
-    public void editPreparationDetails(PreparationDetails details) {
+    public void editPreparationDetails( PreparationDetails details ) {
 
         verifyIfCanBeEdited();
 
@@ -129,78 +135,93 @@ public class Delivery {
     }
 
 
+    //Colocar no estado de "Esperando um entregador".
     public void place() {
 
         verifyIfCanBePlaced();
 
-        this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
-        this.setPlacedAt(OffsetDateTime.now());
+        this.changeStatusTo( DeliveryStatus.WAITING_FOR_COURIER );
+
+        this.setPlacedAt( OffsetDateTime.now() );
     }
 
 
-    public void pickUp(UUID courierId) {
+    //Entrega só pode passar para o estado "Esperando um entregador", se não estiver vazia e estiver com status "draft".
+    private void verifyIfCanBePlaced() {
+
+        if ( !isFilled() ) {
+
+            throw new DomainException();
+        }
+
+        if ( !getStatus().equals( DeliveryStatus.DRAFT ) ) {
+
+            throw new DomainException();
+        }
+    }
+
+
+    //Entrega só pode ser editada, se estiver com status "draft".
+    private void verifyIfCanBeEdited() {
+
+        if (!getStatus().equals( DeliveryStatus.DRAFT) ) {
+
+            throw new DomainException();
+        }
+    }
+
+
+    private boolean isFilled() {
+
+        boolean hasSender = this.getSender() != null;
+        boolean hasRecipient = this.getRecipient() != null;
+        boolean hasTotalCost = this.getTotalCost() != null;
+
+        return hasSender && hasRecipient && hasTotalCost;
+    }
+
+
+    //Significa que a entrega foi pega por um entegador, e passou para o estado "em transito").
+    public void pickUp( UUID courierId ) {
 
         this.setCourierId(courierId);
-        this.changeStatusTo(DeliveryStatus.IN_TRANSIT);
-        this.setAssignedAt(OffsetDateTime.now());
+
+        this.changeStatusTo( DeliveryStatus.IN_TRANSIT );
+
+        this.setAssignedAt( OffsetDateTime.now( ));
     }
 
 
     public void markAsDelivered() {
 
-        this.changeStatusTo(DeliveryStatus.DELIVERED);
-        this.setFulfilledAt(OffsetDateTime.now());
+        this.changeStatusTo( DeliveryStatus.DELIVERED );
+
+        this.setFulfilledAt( OffsetDateTime.now() );
     }
 
 
     public List<Item> getItems() {
 
-        return Collections.unmodifiableList(this.items);
+        return Collections.unmodifiableList( this.items );
     }
 
+
+    //Calcula o total de items
     private void calculateTotalItems() {
 
-        int totalItems = getItems().stream().mapToInt(Item::getQuantity).sum();
-        setTotalItems(totalItems);
-    }
+        int totalItems = getItems().stream().mapToInt( Item::getQuantity ).sum();
 
-    private void verifyIfCanBePlaced() {
-
-        if (!isFilled()) {
-
-            throw new DomainException();
-        }
-
-        if (!getStatus().equals(DeliveryStatus.DRAFT)) {
-
-            throw new DomainException();
-        }
+        setTotalItems( totalItems );
     }
 
 
-    private void verifyIfCanBeEdited() {
+    private void changeStatusTo( DeliveryStatus newStatus ) {
 
-        if (!getStatus().equals(DeliveryStatus.DRAFT)) {
-
-            throw new DomainException();
-        }
-    }
-
-    private boolean isFilled() {
-
-        return this.getSender() != null
-                && this.getRecipient() != null
-                && this.getTotalCost() != null;
-    }
-
-
-    private void changeStatusTo(DeliveryStatus newStatus) {
-
-        if (newStatus != null && this.getStatus().canNotChangeTo(newStatus)) {
+        if ( newStatus != null && this.getStatus().canNotChangeTo(newStatus) ) {
 
             throw new DomainException( "Invalid status transition from " + this.getStatus() + " to " + newStatus );
         }
-        this.setStatus(newStatus);
+        this.setStatus( newStatus );
     }
 
 
@@ -210,9 +231,13 @@ public class Delivery {
     public static class PreparationDetails {
 
         private ContactPoint sender;
+
         private ContactPoint recipient;
+
         private BigDecimal distanceFee;
+
         private BigDecimal courierPayout;
+
         private Duration expectedDeliveryTime;
     }
 
