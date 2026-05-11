@@ -20,8 +20,8 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Setter(AccessLevel.PRIVATE)
 @Getter
+// Classe Delivery herda de AbstractAggregateRoot do Spring Data. Isso permite publicar Domain Events.
 public class Delivery extends AbstractAggregateRoot<Delivery> {
-
     @Id
     @EqualsAndHashCode.Include
     private UUID id;

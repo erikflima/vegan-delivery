@@ -32,7 +32,7 @@ public class DeliveryPreparationService {
         Delivery delivery = Delivery.draft();
         handlePreparation(input, delivery);
 
-        return deliveryRepository.saveAndFlush(delivery);
+        return deliveryRepository.saveAndFlush( delivery );
     }
 
 
