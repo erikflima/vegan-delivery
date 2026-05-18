@@ -2,10 +2,9 @@ spring:
   application:
     name: delivery-tracking  # Nome da aplicação
 
-  # Ativa cores no console (ANSI)
   output:
     ansi:
-      enabled: ALWAYS
+      enabled: ALWAYS   # Ativa cores no console (ANSI)
 
   jpa:
     hibernate:
@@ -13,6 +12,17 @@ spring:
     show-sql: false     # Mostra queries SQL no console
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/deliverydb  # URL do banco
+    url: jdbc:postgresql://localhost:5432/deliverydb  # URL do banco de dados do projeto
     username: postgres
     password: postgres
+
+  kafka:
+    producer:                                                                       # Configuracoes para o produtor/publicador de eventos
+      bootstrap-servers: localhost:9092                                             # Endereco do broker Kafka
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer        # Serializa a chave da mensagem como String
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # Serializa o conteudo da mensagem em JSON
+      properties:
+        spring.json.type.mapping:
+          delivery-placed-event:com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryPlacedEvent,
+          delivery-picked-up-event:com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryPickUpEvent,
+          delivery-fulfilled-event:com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryFulfilledEvent

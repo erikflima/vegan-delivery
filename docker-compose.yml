@@ -55,7 +55,7 @@ services:         # Define os servicos (containers) que serao executados
 
     container_name: kafka
 
-    image: apache/kafka:4.1.1                                                                           # Imagem oficial do Kafka
+    image: apache/kafka:4.1.1                                                                           # Imagem oficial do Kafka.
 
     ports:
       - 9092:9092                                                                                       # Expõe a porta externa do Kafka
