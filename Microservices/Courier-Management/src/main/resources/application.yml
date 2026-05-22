@@ -18,3 +18,17 @@ spring:
     url: jdbc:postgresql://localhost:5432/courierdb  # URL do banco PostgreSQL
     username: postgres  # Usuário do banco
     password: postgres  # Senha do banco (não usar assim em produção)
+
+  kafka:                                                                                                                                 # Configuração principal do Kafka no Spring Boot
+    consumer:                                                                                                                            # Configurações do consumidor Kafka (quem recebe mensagens)
+      bootstrap-servers: localhost:9092                                                                                                  # Endereço do broker Kafka para conexão (localhost na porta 9092)
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer                                                         # Converte a chave (key) da mensagem Kafka para String
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer                                         # Desserializador com tratamento de erros para evitar quebra do consumer em mensagens inválidas
+      group-id: courier-management                                                                                                       # Nome do grupo de consumidores; consumidores do mesmo grupo dividem as mensagens
+      properties:                                                                                                                        # Propriedades extras/customizadas do consumidor
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer                          # Define o desserializador real usado pelo ErrorHandlingDeserializer (JSON)
+        spring.json.trusted.packages: '*'                                                                                                # Permite desserializar classes de qualquer pacote (menos seguro em produção)
+        spring.json.type.mapping:                                                                                                        # Faz o mapeamento entre nomes de eventos Kafka e classes Java
+          delivery-placed-event:com.eriklima.vegandelivery.courier.management.infrastructure.event.DeliveryPlacedIntegrationEvent,
+          delivery-picked-up-event:com.fasterxml.jackson.databind.JsonNode,
+          delivery-fulfilled-event:com.eriklima.vegandelivery.courier.management.infrastructure.event.DeliveryFulfilledIntegrationEvent

@@ -33,6 +33,14 @@ public class DeliveryDomainEventHandler {
            -> deliveryId: identificador usado como chave da mensagem (ajuda o Kafka a manter eventos do mesmo delivery organizados)
            -> deliveryEventsTopicName: topico para onde a mensagem sera enviada */
         integrationEventPublisher.publish( event, event.getDeliveryId().toString(), deliveryEventsTopicName );
+
+        log.info("\n--------------------------------------------- ");
+        log.info("Evento publicado no Kafka!");
+        log.info("Nome do topico no qual o evento foi publicado: " + deliveryEventsTopicName );
+        log.info("Tipo de evento: " + event.getClass().getSimpleName() );
+        log.info("Id da delivery: " + event.getDeliveryId() );
+        log.info("Momento que o evento ocorreu: " + event.getOccurredAt() );
+        log.info("--------------------------------------------- \n");
     }
 
 
@@ -51,6 +59,14 @@ public class DeliveryDomainEventHandler {
            -> deliveryId: identificador usado como chave da mensagem (ajuda o Kafka a manter eventos do mesmo delivery organizados)
            -> deliveryEventsTopicName: topico para onde a mensagem sera enviada */
         integrationEventPublisher.publish( event, event.getDeliveryId().toString(), deliveryEventsTopicName );
+
+        log.info("\n--------------------------------------------- ");
+        log.info("Evento publicado no Kafka!");
+        log.info("Nome do topico no qual o evento foi publicado: " + deliveryEventsTopicName );
+        log.info("Tipo de evento: " + event.getClass().getSimpleName() );
+        log.info("Id da delivery: " + event.getDeliveryId() );
+        log.info("Momento que o evento ocorreu: " + event.getOccurredAt() );
+        log.info("--------------------------------------------- \n");
     }
 
 
@@ -69,6 +85,14 @@ public class DeliveryDomainEventHandler {
            -> deliveryId: identificador usado como chave da mensagem (ajuda o Kafka a manter eventos do mesmo delivery organizados)
            -> deliveryEventsTopicName: topico para onde a mensagem sera enviada */
         integrationEventPublisher.publish( event, event.getDeliveryId().toString(), deliveryEventsTopicName );
+
+        log.info("\n--------------------------------------------- ");
+        log.info("Evento publicado no Kafka!");
+        log.info("Nome do topico no qual o evento foi publicado: " + deliveryEventsTopicName );
+        log.info("Tipo de evento: " + event.getClass().getSimpleName() );
+        log.info("Id da delivery: " + event.getDeliveryId() );
+        log.info("Momento que o evento ocorreu: " + event.getOccurredAt() );
+        log.info("--------------------------------------------- \n");
     }
 
 }
