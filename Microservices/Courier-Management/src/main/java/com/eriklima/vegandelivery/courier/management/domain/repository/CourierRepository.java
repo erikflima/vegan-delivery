@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface CourierRepository extends JpaRepository<Courier, UUID> {
 
+    //Busca um entregador que fez a entrega por ultimo.
     Optional<Courier> findTop1ByOrderByLastFulfilledDeliveryAtAsc();
 
     Optional<Courier> findByPendingDeliveries_id( UUID deliveryId );

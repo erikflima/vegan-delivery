@@ -1,0 +1,9 @@
+server.port: 8761
+
+spring:
+  application.name: Service-Registry  # Nome do microserviço
+
+eureka:                               # Configurações do Eureka
+  client:                             # Configurações do cliente Eureka
+    register-with-eureka: false       # Impede que este projeto tente se registrar no Eureka, pois ele próprio é o servidor Eureka.
+    fetch-registry: false             # Impede que este projeto tente buscar lista de serviços do Eureka, pois ele próprio mantém essa lista

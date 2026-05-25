@@ -18,22 +18,25 @@ public class CourierDeliveryService {
 
     public void assign( UUID deliveryId ) {
 
+        //Busca um entregador que fez a entrega por ultimo, pois teoricamente ele esta livre para proxima entrega. Exemplo de regra de neogcio.
         Courier courier = courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc().orElseThrow();
 
+        //Artibui a entrega para o entregador.
         courier.assign( deliveryId );
 
         courierRepository.saveAndFlush( courier );
 
         log.info("\n---------------------------------------------");
-        log.info("Courier assigned to delivery!");
+        log.info("Courier assigned to delivery! | Entrega atribuída ao entregador!");
         log.info("Courier ID: {}", courier.getId());
         log.info("Delivery ID: {}", deliveryId);
         log.info("---------------------------------------------\n");
     }
 
 
-    public void fulfill(UUID deliveryId) {
+    public void fulfill( UUID deliveryId ) {
 
+        //Busca o entregador da entrega que esta pendente.
         Courier courier = courierRepository.findByPendingDeliveries_id( deliveryId ).orElseThrow();
 
         courier.fulfill( deliveryId );
@@ -41,7 +44,7 @@ public class CourierDeliveryService {
         courierRepository.saveAndFlush( courier );
 
         log.info("\n---------------------------------------------");
-        log.info("Courier fulfilled the delivery!");
+        log.info("Courier fulfilled the delivery! Entrega concluída pelo entregador!");
         log.info("Courier ID: {}", courier.getId());
         log.info("Delivery ID: {}", deliveryId);
         log.info("---------------------------------------------\n");
