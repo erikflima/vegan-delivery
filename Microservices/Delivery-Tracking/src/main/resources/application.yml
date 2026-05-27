@@ -1,3 +1,7 @@
+server.port: 8080
+
+#----------------------------------------
+
 spring:
   application:
     name: delivery-tracking  # Nome da aplicação
@@ -26,3 +30,13 @@ spring:
           delivery-placed-event:com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryPlacedEvent,
           delivery-picked-up-event:com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryPickUpEvent,
           delivery-fulfilled-event:com.eriklima.vegandelivery.delivery.tracking.domain.event.DeliveryFulfilledEvent
+
+#----------------------------------------
+
+eureka:                                             # Configurações relacionadas ao Spring Cloud com Eureka (Service Discovery).
+  client:                                           # Configurações do cliente  Spring Cloud com Eureka (microserviço que vai se registrar).
+    server-url:                                     # Configuração das URLs do servidor Eureka.
+      default-zone: http://localhost:8761/eureka/   # Endereço do servidor Eureka onde este microserviço irá se registrar.
+  instance:                                         # Configurações da instância deste microserviço no Eureka.
+    instance-id: ${random.value}                    # Gera um ID aleatório para cada instância do microserviço.
+    prefer-ip-address: true                         # Faz o Eureka registrar o IP da máquina em vez do hostname.
