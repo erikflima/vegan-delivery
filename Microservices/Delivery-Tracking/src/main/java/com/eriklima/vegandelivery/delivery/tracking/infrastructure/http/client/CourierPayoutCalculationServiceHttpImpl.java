@@ -15,6 +15,7 @@ public class CourierPayoutCalculationServiceHttpImpl implements CourierPayoutCal
     @Override
     public BigDecimal calculatePayout( Double distanceInKm ) {
 
+        //Aqui eh feito uma requisicao para o endpoint do projeto/api "Courier-Management". Ou seja, vai ser chamado um endpoint de outro projeto.
         var courierPayoutResultModel = courierAPIClient.payoutCalculation( new CourierPayoutCalculationInput( distanceInKm ) );
 
         return courierPayoutResultModel.getPayoutFee();
