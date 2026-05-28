@@ -44,6 +44,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Dependencia que transforma esse projeto em cliente Eureka, permitindo descobrir automaticamente os microservicos registrados. -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
 	</dependencies>
 
 
