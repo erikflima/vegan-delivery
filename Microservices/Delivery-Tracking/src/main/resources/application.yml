@@ -40,3 +40,28 @@ eureka:                                             # Configurações relacionad
   instance:                                         # Configurações da instância deste microserviço no Eureka.
     instance-id: ${random.value}                    # Gera um ID aleatório para cada instância do microserviço.
     prefer-ip-address: true                         # Faz o Eureka registrar o IP da máquina em vez do hostname.
+
+#----------------------------------------
+
+resilience4j:                                                           # Configurações de resiliência do Resilience4j (Retry, Timeout, Circuit Breaker, etc.)
+
+  retry:                                                                # Configurações relacionadas ao padrão Retry (tentativa automática em caso de falha
+
+    configs:                                                            # Configurações base/reutilizáveis de Retry
+
+      default:                                                          # Configuracao padrão de Retry que pode ser reaproveitada
+
+        maxAttempts: 2                                                  # Define no maximo 2 tentativas totais (1 tentativa inicial + 1 nova tentativa)
+        waitDuration: 20ms                                              # Define espera de 20 milissegundos entre uma tentativa e outra
+
+    instances:                                                          # Configurações específicas para metodos/instâncias com Retry
+      Retry_CourierAPIClient_payoutCalculation:                         # Nome da configuracao usada na interface "CourierAPIClient" @Retry( name = "Retry_CourierAPIClient_payoutCalculation" )
+
+        baseConfig: default                                             # Herda configuracoes da configuracao padrao chamada "default"
+        maxAttempts: 3                                                  # Sobrescreve o padrão e define até 3 tentativas totais para este método
+
+        retryExceptions:                                                # Lista de excecoes que DEVEM disparar nova tentativa automatica
+          - org.springframework.web.client.ResourceAccessException      # Faz retry quando houver erro de conexao, timeout ou indisponibilidade do servico.
+
+        ignoreExceptions:                                               # Lista de excecoes que NAO devem tentar novamente
+          - org.springframework.web.client.HttpServerErrorException     # Ignora erros HTTP do servidor (500, 502, 503, etc.) sem retry.
