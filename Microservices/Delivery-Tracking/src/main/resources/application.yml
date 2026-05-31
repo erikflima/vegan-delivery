@@ -65,3 +65,21 @@ resilience4j:                                                           # Config
 
         ignoreExceptions:                                               # Lista de excecoes que NAO devem tentar novamente
           - org.springframework.web.client.HttpServerErrorException     # Ignora erros HTTP do servidor (500, 502, 503, etc.) sem retry.
+
+
+  circuitbreaker:                                           # Configurações relacionadas ao padrão Circuit Breaker (proteção contra falhas)
+
+    configs:                                                # Configurações base/reutilizáveis do Circuit Breaker
+
+      default:                                              # Configuração padrão que pode ser reutilizada por várias instâncias
+        slidingWindowType: COUNT_BASED                      # Usa quantidade de chamadas como critério de análise (e não tempo)
+        slidingWindowSize: 10                               # Analisa as últimas 10 chamadas para decidir se abre ou não o circuito
+        minimumNumberOfCalls: 5                             # Exige no mínimo 5 chamadas antes de começar a calcular taxa de falha
+        failureRateThreshold: 50                            # Abre o circuito se 50% ou mais das chamadas falharem
+        permittedNumberOfCallsInHalfOpenState: 3            # Quando estiver testando recuperação, permite apenas 3 chamadas de teste
+        waitDurationInOpenState: 10000                      # Mantem o circuito aberto por 10 segundos antes de tentar novamente
+
+    instances:                                              # Configurações específicas para métodos/instâncias com Circuit Breaker
+      CircuitBreaker_CourierAPIClient_payoutCalculation:    # Nome da configuracao usada na interface "CourierAPIClient" @CircuitBreaker( name = "CircuitBreaker_CourierAPIClient_payoutCalculation" )
+        baseConfig: default                                 # Herda todas as configuracoes da configuração padrao "default"
+        waitDurationInOpenState: 5000                       # Sobrescreve o padrão e mantém o circuito aberto por 5 segundos neste método
